@@ -1,0 +1,8 @@
+hw11/stopwords.txt
+hw8/concordia.json
+hw8/mcgill.json
+*/*.sqlite
+hw5/*.csv
+final_project/__pycache__
+*.sqlite
+.DS_Store
