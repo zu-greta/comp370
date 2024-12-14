@@ -9,3 +9,6 @@ final_project/__pycache__
 env/
 hw12/clean_dialog.csv
 hw12/interaction_network.json
+hw11/hw11/
+final_project/group39_2023_report.pdf
+final_project/build_tfidf_word_list.py
