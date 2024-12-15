@@ -4,6 +4,114 @@
 ---
 ---
 
+## important concepts
+- **data science project phases**:
+    - *question definition* (what to measure)
+        - iterative process. statement of something we want to measure. refined!
+        - find a representative stakeholder -> develop a use case -> iterate on the question
+    - *data collection* (how to measure)
+        - obtaining and arranging data (collect, clean, correct, standardize)
+        - collect the data (download, scrape, api) -> clean the data (remove duplicates, missing values, outliers, format) -> organize the data (format, structure, store)
+        - *found data* vs *designed data*
+    - *data annotation* (infer/add feature to make measure clearer)
+        - applying/inferring features
+        - tasks: devising the labels to use and assigning the labels to the data
+        - properties: real-valued or categorical (classifications)
+        - *typology*: comprehensive, sharply-defined, objective-ish categorization system
+            - *building typology*: get representative data -> get typology or build one -> sanity check yourself -> human test with expert coders -> does it work? if not go back to 2, else move on
+        - *open coding*: take sample of data, code it and look for patterns -> create categories (iterate)
+        - *human coding*: process of assigning labels 
+            - *expert coding* vs *crowdsourcing* 
+            - ethics: capacity of harm!
+            - *training*: prepare a code book (typology definition document) -> provide challenging examples -> run the group sessions
+            - *human coding process*: preparation phase (decide groups, develop code book, training material, annotations software) -> annotation phase (recruit coders, run training sessions, coders code data) -> validation phase (assess quality and level of agreement)
+            - *annotation quality - level of agreement*: perfect/majority/no majority agreement
+            - *annotator agreement*: confusing typology/bad coder/tricky cases/human error
+        - *automated annotation*: using algorithm 
+        -*precise answers*: statement that provides all the details audience requires in order to use the info in a wide array of contexts. factors: question objective (what=definition, how=explanation/process, why=motivation), level of detail expected by the audience
+    - *data analysis* (measuring)
+        - stats models/visualizations using existing methods and existing clean quantitative data
+        - data science builds new things/innovation
+        - *fishing expedition*: when you don't have a question, just looking at data to see what you can find. ask questions that  narrow the open ended question to bound it -> analysis should have a concetre outcome/insight in mind, else if no target insight you are fishing -> result attempt to support insight
+        - *result*: a claim that can be directly verified using a process and data. to be valid, need valid data + valid method
+    - *interpretation* (how to understand)
+        - evidence != answer. interpretation is about using evidence to support a conclusion 
+        - *structure*: restate the original question + key big points takeaways with eveidence to validate it + concluding section that draws on main points 
+        - *key points technique*: assert contextualization -> include negative outcomes -> support by combing results + extrapolating from results -> use points to make a meta point (conclusion)
+        - *interpretation approach*: write out big ppints that stand out -> decide on a rough conclusion that fits -> write out arguments for each point -> if arguments need more evidence loop back to analysis, else if evidence supports another point loop back -> refine the conclusion
+    - *communication* (share)
+        - communication == persuasion == story
+        - remember the audience
+        - *visualization*: to support the storytelling. necessary details: readable + title + caption
+        - *written reports*:
+            - motivation
+            - objective/problem
+            - data
+            - design/methods
+            - resuts
+            - findings/interpretation/discussion
+            - conclusion
+        - *presentation*: relatable opening + technical written report stucture. be relatable, tell a story, highlight main point, make it engaging
+- **unix**:
+    - programs that do one thing well
+    - programs that work well together
+    - programs that can handle text streams
+- **working with data**: exploration + scale + visualization
+- **cloud**:
+    - disadvantages of not cloud: limited compute power, limited special hardware, limited storage, insecure, poor proximity to resources, uptime
+    - virtual machines: close to power plants, can grab data quickly
+- **EC2/ssh keys**:
+    - AWS account -> ssh key pair (`ssh-keygen`) -> create lightsail instance -> `ssh -i .ssh/<instance_name> unbuntu@<IP address>`
+- **user creation**:
+    - `ssh <IP address>` -> `sudo adduser <username>` -> `sudo usermod -aG <username>` -> `su <username>` -> `mkdir .ssh` -> `chmod 700 .ssh` -> `cd .ssh` -> copy the id_rsa.pub key -> `vim authorized_keys` and paste it -> `ssh <IP address>`
+- **tmux**: working remote `tmux new -s <name>` and `tmuz attach -t <name>`
+- **webserver**: `ssh <IP address>` -> `sudo apt install apache2` -> `sudo systemctl enable apache2` -> `sudo vim /etc/apache2/ports.conf` Listen 8008 -> `sudo vim /etc/apache2/sites-available/000-default.conf` virtual host*:8008 -> `sudo vim /var/www/html/comp370_hw2.txt` Hello world ->`sudo systemctl restart apache2` -> instance, firewall ipv4, add rule, custom, TCP, 8008 -> access using localhost:8008/comp370_hw2.txt
+- **database**: `ssh <IP address>` -> `sudo apt install mariadb-server -y` -> `sudo systemctl enable mariadb` -> `sudo vim /etc/mysql/mariadb.conf.d/50-server.cnf` port 6002 change bind address = 0.0.0.0 -> `sudo systemctl restart mariadb` -> `sudo mysql` -> CREATE DATABSE; CREATE USER 'comp370'@'%' IDENTIFIED BY '$ungl@ss3s'; GRANT PRIVILEGES ON comp370 * TO 'comp370'@'%'; FLUSH PRIVILEGES; -> instance, ipv4 firewall, add rule, custom TCP 6002 -> `sudo systemctl restart mariadb`
+- **core tools**:
+    - exploration + expressivness + reproduceability + collaboration + communication
+- **project structure**: project name - README (welcome, overview, goals, TODOs, GOTCHAs, installation, run instructions) + data dir + src dir (implemented function code) + scripts dir (interaction with code)
+- **python**: scripts = program, built-in types, libraries 
+- **reasons/ways for coding**:
+    - exploration (trying things out)
+    - tool building (scripts, automation, packaging)
+    - pipelining (automations, big projects)
+- **jupyter notebook**: intall jupyter on EC2 -> launch vscode -> in terminal, launch jupyter and note down port number -> in port forwarding list, add port number -> open browser and paste URL+token
+- **bokeh**: data prep (get the data and filter it) -> import bokeh -> read and sort the data -> create select widgets -> create the figures (title, x/y-axis) with labels -> init the data source -> plot first set of data (.line ...) -> setup legend and layout -> update function (callback) -> attach callback to select widgets -> define layout, curdoc().add_root(layout) -> bokeh serve --port 8888 --show file_name.py
+- **modularization**: grouping by functionality (functions, classes, modules, packages)
+- **redundant code**: hard to maintain + hard to read + code bloats. recognize it + group into functions generalized + break longer functions into smaller ones + use collections 
+- **dabbling**: identify critical parts -> write just enough code to check if its the right approach -> try to accomplish critical part with different tool -> iterate (dont get committed)
+- **refactoring**: reorganizing the structure of the code without changing the functionality (renaming variables, breaking down long functions, grouping similar functions, removing redundant code, changing libraries, altering function contracts...)
+- **api data collection**: construct URL+params -> call the URL -> receive the data -> store the data -> loop back if needed
+- **scraping**: *static site scraping* (wget, curl, requests, bs4) vs *dynamic site scraping* (bs4, selenium)
+    - scraping with cache: check if cache exists -> if yes use it else scrape the page and save the cache and then use the cache -> soup = bs4.BeautifulSoup(hmtl, 'html.parser') -> find the elements (soup.find_all(), soup.find()) using the html tags -> extract the data and format it -> save the data (json.dump())
+- **sampling**: taking a subset of the data, more manageable, easier to understand and faster to process
+    - *systematic sampling by id* vs *snowball sampling*
+- **bias**: disproportinately weight factors that impact measurements
+- **tf-idf**: term frequency inverse document frequency (tf-idf(term, document, Documents) = tf(term, document) * idf(term, Documents), where idf(term, Documents) = log(total_num_catgories / (|{document in Docments: term in document}|)))
+- **networks**:
+    - nodes, edges, weights, paths
+    - centrality (how important in the network), degree (connected), closeness (number of hops to others), betweeness (essentialness, fraction of all shortest paths in the network that pass through the node)
+    - communities/clustering: how to group nodes. *modularity*: the ratio of the number of edges inside vs outside the cluster
+- **career**: nobody knows all the tools, keep learning, adapt, social network (develop and maintain a professional network), don't get discouraged
+
+---
+
+## important coding examples
+```
+- argparse
+- CLI + csvtool
+- unittests
+- bokeh
+- python requests for api calls
+- json
+- tf-idf
+- network analysis (hw12)
+```
+
+---
+---
+---
+
 ## Unit 1
 ### Lecture 3 - data science
 **data science** : innovative use of data to understand something
@@ -73,7 +181,7 @@
 
 **unix**: small modular tools that could work together:
 1. write programs to do one thing well
-2. write progras to work together 
+2. write programs to work together 
 3. write programs to handle text streams because it is a universal interface
 
 ### Lecture 11 - compute in the cloud
@@ -388,7 +496,7 @@ def path_sep():
 *notebook will lose its state when the kernel is restarted*
 
 ### Lecture 31 - choosing the right tools
-| strenghts and weaknesses | Jupyter | Scripts and CLI | 
+| strenghts/weaknesses | Jupyter | Scripts and CLI | 
 |----------|----------|----------|
 | integrated work (work + visual aids)   | + code and analysis persistently embedded in the same visual context and linear workflows are easy to capture   | - visuals separated from code and arbitrary workflows captured in scripts   | 
 | state maintenance   | - easy for data and code to fall out of sync (harder maintenance) and state lost when kernel dies -> save it as csv  | + state persists in files and forced mainetance means its more organised. - state must be explicitly maintained   | 
@@ -870,9 +978,9 @@ if __name__=="__main__":
 - "engage with biases we want to keep"
 - "eliminate others"
 
-**paradox of the sample design**: sample X to learn more about it <=> to smaple properly we need to know more about X
+**paradox of the sample design**: sample X to learn more about it <=> to sample properly we need to know more about X
 
-*spend time studying the data, think of the blind spots and engage with them -> iterate and educate yourslf. gather what you can knowing it is biased, characterize it and look/engage with another community and repeat
+*spend time studying the data, think of the blind spots and engage with them -> iterate and educate yourslf. gather what you can knowing it is biased, characterize it and look/engage with another community and repeat*
 
 ---
 ---
@@ -897,7 +1005,7 @@ if __name__=="__main__":
 
 **forced choice**: there is no right label, but forcing the annotator to pick something
 
-*any categorucal property requires a typology (some things are harder than they seem - hard to define labels, hard to dissern with available info)*
+*any categorical property requires a typology (some things are harder than they seem - hard to define labels, hard to dissern with available info)*
 
 ### Lecture 47 - building a typology
 **typology design objective**: a document consisting of motivation (why typology exists) and contect, overview of types and relation to one another, list of types (with concise definitions, positive examples with inlusion rational, negative examples with exclusion rational, edge cases with inclusion and exclusion rational), arguments/evidence for comprehensivness -> human readable, intended for humans document that lays out the purpose and category of typology, and defines the types of categories including data examples, outide cases and edge cases
@@ -909,7 +1017,7 @@ if __name__=="__main__":
 4. Human test: use "expert" coders to evaluate typology on representative data (make sure it is generalizable and unambiguous)
 5. Does it work? (if not, go back to step 2. if so, move on)
 
-**open coding**: take smaple of data and code it, then look for patterns and create categories, review and iterate
+**open coding**: take sample of data and code it, then look for patterns and create categories, review and iterate
 
 **typology has to be**:
 - *comprehensive*: all data should fit into one or more categories. **do not** have a catch all others category - it can lead to confusions
@@ -986,7 +1094,7 @@ if __name__=="__main__":
 
 **substantiating insights**: data analysis is to back up our insights. the goal is to get smaller pieces to back up our insights
 
-**asnwering questions**: select/build a tool, prepare data, apply tool to data, snaity check results
+**asnwering questions**: select/build a tool, prepare data, apply tool to data, sanity check results
 
 **follow up**: is answer obvious? would answer impact validity/relevance of result we have insight sought?
 
@@ -1004,7 +1112,7 @@ when you don't have a question and you are just looking at the data to see what 
 **data/method dependency**: data and method are dependent on each other. if you change one, you have to change the other
 
 ### Lecture 54 - most frequent world analysis
-**TF-IDF**: term frequency inverse document frequency. a term's overlal score should be impacted by how common it is in genreal. *for analysing text*
+**TF-IDF**: term frequency inverse document frequency. a term's overall score should be impacted by how common it is in general. *for analysing text*
 
 > `tf-idf(term, document, Documents) = tf(term, document) * idf(term, Documents)` -> frequency of the term in the category * the penalty term
 
@@ -1168,7 +1276,7 @@ transactions)                               might have an attribute)
 
 ## Unit 9
 ### Lecture 58 - interpretation
-**communication = persuasion**: in data science, aim to use evidence to convinve someone our answer to the original question is correct. *evidence is not an argument*, assemble the argument using the evidence. *interpretation* is the beginning of communication (how to give back to the stakeholders)
+**communication == persuasion**: in data science, aim to use evidence to convince someone our answer to the original question is correct. *evidence is not an argument*, assemble the argument using the evidence. *interpretation* is the beginning of communication (how to give back to the stakeholders)
 
 *introducing new evidence is the analysis phase, not interpretation*
 
@@ -1178,12 +1286,12 @@ transactions)                               might have an attribute)
 - result don't go all the way to the answer, you need to convince the audience that the proxy is good enough
 - hard to present and organize
 
-**interpretation**: using evidence to suppot a conclusion. separate presenting evidence and intrepretation, it connects evidence to the conclusion, making an argument to the audience as to why they should "believe"
+**interpretation**: using evidence to support a conclusion. separate presenting evidence and intrepretation, it connects evidence to the conclusion, making an argument to the audience as to why they should "believe"
 
 **structure**:
 - restate the original question...
 - key big point # + takeaways with evidence to validate it
-- concluding section draws on main points (nit directly on the evidence)
+- concluding section draws on main points (not directly on the evidence)
 
 *analysis will establish the validity of the evidence and interpretation can use these + present the methods that got us here*
 
