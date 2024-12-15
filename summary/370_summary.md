@@ -98,14 +98,14 @@
 
 ## important coding examples
 ```
-- argparse
-- CLI + csvtool
-- unittests
-- bokeh
-- python requests for api calls
-- json
-- tf-idf
-- network analysis (hw12)
+- argparse (26)
+- CLI + csvtool (26)
+- unittests (27)
+- bokeh (32)
+- python requests for api calls (41)
+- json (42)
+- tf-idf (54)
+- network analysis (55-57)
 ```
 
 ---
@@ -1269,7 +1269,96 @@ transactions)                               might have an attribute)
 - modularity detection: want a small number of crossing edges relative to the number of edges in the cluster
 - modularity: the ratio of the number of edges inside the cluster vs. outside
 
-> TODO: examples from hw12
+**building interaction networks**
+```
+import csv
+import json
+import argparse
+from collections import defaultdict, Counter
+
+def build_interaction_network(input_file, output_file):
+    with open(input_file, 'r', encoding='utf-8') as file:
+        reader = csv.reader(file)
+        next(reader)  
+        lines = list(reader)
+    # Count the frequency of each character
+    character_counts = Counter(line[2].lower() for line in lines)
+    # Filter out irrelevant characters
+    filtered_characters = {char for char in character_counts if not any(word in char for word in ["others", "ponies", "and", "all"])}
+    # Get the top 101 most frequent characters
+    top_characters = set([char for char, _ in character_counts.most_common(101) if char in filtered_characters])
+    interaction_network = defaultdict(lambda: defaultdict(int))
+    current_episode = None
+    previous_character = None
+    for line in lines:
+        episode = line[0]
+        character = line[2].lower()
+        dialogue = line[3]
+        # Respect episode boundaries
+        if episode != current_episode:
+            current_episode = episode
+            previous_character = None
+            continue
+        # Check if the character is in the top 101 and not filtered
+        if character in top_characters:
+            if previous_character and previous_character in top_characters and previous_character != character:  # exclude self-edges
+                interaction_network[previous_character][character] += 1
+                interaction_network[character][previous_character] += 1
+            previous_character = character
+        else:
+            previous_character = None
+    output_data = {char: {other_char: count for other_char, count in interactions.items() if other_char != char} for char, interactions in interaction_network.items()}
+    with open(output_file, 'w', encoding='utf-8') as file:
+        json.dump(output_data, file, ensure_ascii=False)
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Build the MLP interaction network.")
+    parser.add_argument('-i', '--input', required=True, help="Path to the input CSV file.")
+    parser.add_argument('-o', '--output', required=True, help="Path to the output JSON file.")
+    args = parser.parse_args()
+    build_interaction_network(args.input, args.output)
+```
+
+**computing network statistics**
+```
+import json
+import argparse
+import networkx as nx
+
+def compute_network_stats(input_file, output_file):
+    with open(input_file, 'r', encoding='utf-8') as file:
+        interaction_network = json.load(file)
+    # Create a NetworkX graph
+    G = nx.Graph()
+    for character, interactions in interaction_network.items():
+        G.add_node(character)
+        for other_character, weight in interactions.items():
+            G.add_edge(character, other_character, weight=weight)
+    # Compute Centrality measures
+    degree_centrality = nx.degree_centrality(G)
+    top_degree = sorted(degree_centrality, key=degree_centrality.get, reverse=True)[:3]
+    weighted_degree_centrality = {node: sum(data['weight'] for data in G[node].values()) for node in G.nodes()}
+    top_weighted_degree = sorted(weighted_degree_centrality, key=weighted_degree_centrality.get, reverse=True)[:3]
+    closeness_centrality = nx.closeness_centrality(G)
+    top_closeness = sorted(closeness_centrality, key=closeness_centrality.get, reverse=True)[:3]
+    betweenness_centrality = nx.betweenness_centrality(G)
+    top_betweenness = sorted(betweenness_centrality, key=betweenness_centrality.get, reverse=True)[:3]
+    output_data = {
+        "degree": top_degree,
+        "weighted_degree": top_weighted_degree,
+        "closeness": top_closeness,
+        "betweenness": top_betweenness
+    }
+    with open(output_file, 'w', encoding='utf-8') as file:
+        json.dump(output_data, file, ensure_ascii=False)
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Compute interaction network statistics")
+    parser.add_argument('-i', '--input', required=True, help="Path to the input JSON file")
+    parser.add_argument('-o', '--output', required=True, help="Path to the output JSON file")
+    args = parser.parse_args()
+    compute_network_stats(args.input, args.output)
+```
 
 ---
 ---
